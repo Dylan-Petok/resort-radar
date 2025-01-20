@@ -1,9 +1,5 @@
-def extract_data(reddit, ):
-    #seeing if function works
-    print("extract data function")
-
     #resort dictionary with nicknames
-    top_ten = {
+top_ten = {
         "Breckenridge": ["Breck", "Breckenridge"],
         "Aspen Snowmass": ["Aspen", "Snowmass"],
         "Mammoth Mountain": ["Mammoth"],
@@ -15,6 +11,10 @@ def extract_data(reddit, ):
         "Killington": ["Killington", "Killy"],
         "Snowbird": ["Snowbird"]
     }
+
+def extract_data(reddit):
+    #seeing if function works
+    print("extract data function")
 
     #initialize results dictionary
     results = {}
