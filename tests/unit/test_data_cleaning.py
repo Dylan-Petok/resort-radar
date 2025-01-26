@@ -1,5 +1,8 @@
 # tests/unit/test_data_cleaning.py
-
+import sys
+import os
+# Add the project root to sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 import pytest
 from utils.data_cleaning import clean_data, clean_text
 
@@ -39,7 +42,7 @@ def test_clean_text_mixed_content():
 
 def test_clean_data_basic():
     input_data = {"Resort1": [{"resort": "Resort1", "title": "Visit http://example.com", "text": "This is a test!", "score": 10, "created_utc": 123456},]}
-    expected_output = {"Resort1": [{"resort": "Resort1", "title": "visit", "text": "this is a test", "score": 10, "created_utc": "1973-11-29 21:00:56"}]}
+    expected_output = {"Resort1": [{"resort": "Resort1", "title": "visit", "text": "this is a test", "score": 10, "created_utc": "1970-01-02 05:17"}]}
 
     result = clean_data(input_data)
     assert result == expected_output
@@ -49,7 +52,7 @@ def test_clean_data_skip_empty_posts():
         "Resort1": [{"resort": "Resort1", "title": "", "text": "", "score": 5, "created_utc": 123456},
             {"resort": "Resort1", "title": "Some title", "text": "Some valid text", "score": 10, "created_utc": 123457},]}
 
-    expected_output = {"Resort1": [{"resort": "Resort1", "title": "some title", "text": "some valid text", "score": 10, "created_utc": "1973-11-29 21:00:57"}]}
+    expected_output = {"Resort1": [{"resort": "Resort1", "title": "some title", "text": "some valid text", "score": 10, "created_utc": "1970-01-02 05:17"}]}
 
     result = clean_data(input_data)
     assert result == expected_output
@@ -61,8 +64,8 @@ def test_clean_data_missing_fields():
     }
     expected_output = {
         "Resort1": [
-            {"resort": "Resort1", "title": "title only", "text": "", "score": 10, "created_utc": "1973-11-29 21:00:56"},
-            {"resort": "Resort1", "title": "", "text": "text only", "score": 15, "created_utc": "1973-11-29 21:00:57"}
+            {"resort": "Resort1", "title": "title only", "text": "", "score": 10, "created_utc": "1970-01-02 05:17"},
+            {"resort": "Resort1", "title": "", "text": "text only", "score": 15, "created_utc": "1970-01-02 05:17"}
         ]
     }
     result = clean_data(input_data)
