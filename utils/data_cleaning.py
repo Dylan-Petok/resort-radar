@@ -26,10 +26,7 @@ def clean_text(text):
     
     # Remove extra whitespace
     text = re.sub(r"\s+", " ", text).strip()
-    
-    # Remove stopwords
-    text = " ".join(word for word in text.split() if word not in stop_words)
-    
+        
     return text
 
 def clean_data(results):
