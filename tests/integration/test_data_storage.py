@@ -1,12 +1,42 @@
+import sys
+import os
+# Add the project root to sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))) #this code is added so the interpreter can find the utils folder
 import pytest
+import praw
 from unittest.mock import patch
-from utils.data_extraction import extract_data
+from unittest import mock
+from utils.data_storage import connect_snowflake, store_data, load_cleaned_data, store_sentiment_data
 
 @patch("praw.Reddit")
-def test_data_extraction_handles_reddit_api_errors(MockRedditClass):
+def test_store_data_success(MockRedditClass):
     """
-    Test that extract_data handles Reddit API failures gracefully
+    
     """
 
     #Mock the Reddit API to raise an exception
     mock_reddit = MockRedditClass.return_value
+
+@patch("praw.Reddit")
+def test_store_data_failure(MockRedditClass):
+    """
+    
+    """
+
+    #Mock the Reddit API to raise an exception
+    mock_reddit = MockRedditClass.return_value
+
+@patch('utils.data_storage.connect_snowflake')
+def test_load_cleaned_data_success(mock_connect):
+
+@patch('utils.data_storage.connect_snowflake')
+def test_load_cleaned_data_failure(mock_connect):
+
+
+@patch('utils.data_storage.create_engine')
+@patch('pandas.DataFrame.to_sql')
+def test_store_sentiment_data_success(mock_to_sql, mock_create_engine):
+
+@mock.patch('utils.data_storage.create_engine')
+@mock.patch('pandas.DataFrame.to_sql')
+def test_store_sentiment_data_failure(mock_to_sql, mock_create_engine):
