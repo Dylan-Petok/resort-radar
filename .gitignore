@@ -1,4 +1,7 @@
 myenv/
 .env
+.venv
 myenv/Lib/site-packages/torch/lib/*.dll
 myenv/Lib/site-packages/torch/lib/*.lib
+.venv/Lib/site-packages/torch/lib/*.dll
+.venv/Lib/site-packages/torch/lib/*.lib
