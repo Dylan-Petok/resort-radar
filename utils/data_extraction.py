@@ -30,7 +30,7 @@ def extract_data(reddit):
 
         try:
             #Fetch top posts for resort
-            for post in subreddit.search(query=query, sort='top', limit=fetch_limit):
+            for post in subreddit.search(query=query, sort='top', time_filter='year', limit=fetch_limit):
 
                 if not post.selftext.strip():
                     continue

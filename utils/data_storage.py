@@ -25,13 +25,17 @@ def connect_snowflake():
         )
         return conn
     except Exception as e:
-        print(e)
-        return False
+        print("Error connecting to Snowflake:", e)
+        raise  # This will stop execution and give you a full traceback
 
 def store_data(cleaned_results):
         conn = connect_snowflake()
         cursor = conn.cursor()
         try:
+            # Clear out the table before inserting new data.
+            # TRUNCATE TABLE is generally faster than DELETE * from cleaned_posts and resets the table.
+            cursor.execute("TRUNCATE TABLE cleaned_posts")
+            conn.commit()
             # Iterate over cleaned data and insert into Snowflake
             for resort, posts in cleaned_results.items():
                 for post in posts:
@@ -65,14 +69,16 @@ def load_cleaned_data():
         columns = [desc[0] for desc in cursor.description]
         data = pd.DataFrame(cursor.fetchall(), columns=columns)
 
-        conn.close()
-        cursor.close
         print("Cleaned data loaded into Snowflake successfully.")
         return data
 
     except Exception as e:
         print(f"[ISSUE]: Clean Data Load Query : {e}")
         return False
+    
+    finally:
+        conn.close()
+        cursor.close()
 
 
 def store_sentiment_data(dataframe):
