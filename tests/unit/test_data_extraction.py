@@ -1,13 +1,15 @@
 # tests/unit/test_data_extraction.py
 import sys
 import os
+
 # Add the project root to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 import pytest
 from unittest import mock
 import praw
 
 from utils.data_extraction import extract_data, top_ten
+
 
 # We'll reuse this helper function to build mock posts easily.
 def make_mock_post(selftext, title="Fake title", score=0, created_utc=9999999999):
@@ -21,6 +23,7 @@ def make_mock_post(selftext, title="Fake title", score=0, created_utc=9999999999
     post.score = score
     post.created_utc = created_utc
     return post
+
 
 @mock.patch("praw.Reddit")  # no autospec=True, so we can mock subreddit() dynamically
 def test_extract_data_happy_path(MockRedditClass):
@@ -37,8 +40,15 @@ def test_extract_data_happy_path(MockRedditClass):
     # 3) Decide which posts we return for the search
     #    Let's say each call to search() returns 2 valid posts.
     mock_subreddit.search.return_value = [
-        make_mock_post("This is a text post", title="Post title 1", score=10, created_utc=1234567890),
-        make_mock_post("Another text post", title="Post title 2", score=15, created_utc=1234567891),
+        make_mock_post(
+            "This is a text post",
+            title="Post title 1",
+            score=10,
+            created_utc=1234567890,
+        ),
+        make_mock_post(
+            "Another text post", title="Post title 2", score=15, created_utc=1234567891
+        ),
     ]
 
     # 4) Wire up the mock: reddit.subreddit(...) -> mock_subreddit
@@ -84,9 +94,9 @@ def test_extract_data_skips_empty_posts(MockRedditClass):
 
     # Here, we'll include 3 posts: two have empty/whitespace text, one valid
     mock_subreddit.search.return_value = [
-        make_mock_post("", title="Empty text"),            # Should be skipped
-        make_mock_post("   ", title="Whitespace text"),    # Should be skipped
-        make_mock_post("Real post content", title="Real"), # Should be included
+        make_mock_post("", title="Empty text"),  # Should be skipped
+        make_mock_post("   ", title="Whitespace text"),  # Should be skipped
+        make_mock_post("Real post content", title="Real"),  # Should be included
     ]
 
     mock_reddit.subreddit.return_value = mock_subreddit
@@ -110,7 +120,12 @@ def test_extract_data_limits_to_5(MockRedditClass):
 
     # Provide 8 valid text posts
     mock_posts = [
-        make_mock_post(f"Sample post {i}", title=f"Title {i}", score=i*10, created_utc=1000000000+i)
+        make_mock_post(
+            f"Sample post {i}",
+            title=f"Title {i}",
+            score=i * 10,
+            created_utc=1000000000 + i,
+        )
         for i in range(1, 9)
     ]
     mock_subreddit.search.return_value = mock_posts
@@ -165,16 +180,18 @@ def test_extract_data_query_format(MockRedditClass):
     # This depends on your top_ten dict in extract_data.
     # For example, "Breckenridge" -> ["Breck", "Breckenridge"] => "Breck OR Breckenridge"
     expected_calls = [
-        mock.call.search(query="Breck OR Breckenridge", sort='top', limit=15),
-        mock.call.search(query="Aspen OR Snowmass", sort='top', limit=15),
-        mock.call.search(query="Mammoth", sort='top', limit=15),
-        mock.call.search(query="Park City OR PCMR", sort='top', limit=15),
-        mock.call.search(query="Vail", sort='top', limit=15),
-        mock.call.search(query="Jackson OR Jackson Hole OR JHMR OR J Hole", sort='top', limit=15),
-        mock.call.search(query="Lake Tahoe OR Tahoe", sort='top', limit=15),
-        mock.call.search(query="Big Sky", sort='top', limit=15),
-        mock.call.search(query="Killington OR Killy", sort='top', limit=15),
-        mock.call.search(query="Snowbird", sort='top', limit=15),
+        mock.call.search(query="Breck OR Breckenridge", sort="top", limit=15),
+        mock.call.search(query="Aspen OR Snowmass", sort="top", limit=15),
+        mock.call.search(query="Mammoth", sort="top", limit=15),
+        mock.call.search(query="Park City OR PCMR", sort="top", limit=15),
+        mock.call.search(query="Vail", sort="top", limit=15),
+        mock.call.search(
+            query="Jackson OR Jackson Hole OR JHMR OR J Hole", sort="top", limit=15
+        ),
+        mock.call.search(query="Lake Tahoe OR Tahoe", sort="top", limit=15),
+        mock.call.search(query="Big Sky", sort="top", limit=15),
+        mock.call.search(query="Killington OR Killy", sort="top", limit=15),
+        mock.call.search(query="Snowbird", sort="top", limit=15),
     ]
 
     # We can compare the actual calls to the expected calls.

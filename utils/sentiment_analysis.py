@@ -5,17 +5,14 @@ from utils import data_storage
 from sqlalchemy import create_engine
 
 # Define label mappings
-label_mapping = {
-    "LABEL_0": "Negative",
-    "LABEL_1": "Neutral",
-    "LABEL_2": "Positive"
-}
+label_mapping = {"LABEL_0": "Negative", "LABEL_1": "Neutral", "LABEL_2": "Positive"}
 
 # Load model and tokenizer for Cardiff NLP's RoBERTa sentiment analysis
 model_name = "cardiffnlp/twitter-roberta-base-sentiment"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForSequenceClassification.from_pretrained(model_name)
 sentiment_pipeline = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
+
 
 def analyze_sentiment(data: pd.DataFrame) -> pd.DataFrame:
     """
@@ -26,6 +23,7 @@ def analyze_sentiment(data: pd.DataFrame) -> pd.DataFrame:
     The final sentiment label is determined by the maximum probability in the aggregated distribution,
     and the corresponding probability is used as the sentiment score.
     """
+
     def process_post(text):
         if not text or not text.strip():  # Check for empty or whitespace-only text
             return "Neutral", 0.0
@@ -48,8 +46,10 @@ def analyze_sentiment(data: pd.DataFrame) -> pd.DataFrame:
         chunk_size = max_length - special_tokens_count - safety_margin
 
         # Split tokens into chunks of the calculated chunk_size
-        token_chunks = [tokens[i:i + chunk_size] for i in range(0, len(tokens), chunk_size)]
-        
+        token_chunks = [
+            tokens[i : i + chunk_size] for i in range(0, len(tokens), chunk_size)
+        ]
+
         aggregated_probs = None  # To accumulate weighted probabilities
         total_tokens = 0
 
@@ -62,18 +62,23 @@ def analyze_sentiment(data: pd.DataFrame) -> pd.DataFrame:
                 # print(results)
                 # print(f"DEBUG: results type: {type(results)} for chunk {idx}")
                 if not results:
-                    print(f"Warning: No results returned for chunk {idx} (first 100 chars: {chunk_text[:100]})")
+                    print(
+                        f"Warning: No results returned for chunk {idx} (first 100 chars: {chunk_text[:100]})"
+                    )
                     continue
 
                 # Convert list of dicts to a dictionary mapping label to probability
-                chunk_probs = {item['label']: item['score'] for item in results}
+                chunk_probs = {item["label"]: item["score"] for item in results}
 
                 # Weight by the number of tokens in the original chunk
                 chunk_length = len(chunk)
                 total_tokens += chunk_length
 
                 if aggregated_probs is None:
-                    aggregated_probs = {label: prob * chunk_length for label, prob in chunk_probs.items()}
+                    aggregated_probs = {
+                        label: prob * chunk_length
+                        for label, prob in chunk_probs.items()
+                    }
                 else:
                     for label, prob in chunk_probs.items():
                         aggregated_probs[label] += prob * chunk_length
@@ -88,7 +93,10 @@ def analyze_sentiment(data: pd.DataFrame) -> pd.DataFrame:
             return "Neutral", 0.0
 
         # Compute the average probabilities by dividing by the total token count
-        averaged_probs = {label: weighted_prob / total_tokens for label, weighted_prob in aggregated_probs.items()}
+        averaged_probs = {
+            label: weighted_prob / total_tokens
+            for label, weighted_prob in aggregated_probs.items()
+        }
 
         # Select the label with the highest average probability
         overall_label_raw = max(averaged_probs, key=averaged_probs.get)
@@ -97,12 +105,13 @@ def analyze_sentiment(data: pd.DataFrame) -> pd.DataFrame:
         return overall_label, overall_score
 
     # Apply the process_post function to each text in the DataFrame
-    results = data['P_TEXT'].apply(process_post)
-    data['sentiment_label'] = results.apply(lambda x: x[0])
-    data['sentiment_score'] = results.apply(lambda x: x[1])
+    results = data["P_TEXT"].apply(process_post)
+    data["sentiment_label"] = results.apply(lambda x: x[0])
+    data["sentiment_score"] = results.apply(lambda x: x[1])
 
-    print('Done analyzing sentiment with probability aggregation!')
+    print("Done analyzing sentiment with probability aggregation!")
     return data
+
 
 # Example usage:
 # df = pd.DataFrame({"P_TEXT": ["I love this!", "I hate that...", "It is okay."]})

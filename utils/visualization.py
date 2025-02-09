@@ -1,2 +1,2 @@
 def visualize_results():
-    print('visualize results')
+    print("visualize results")
