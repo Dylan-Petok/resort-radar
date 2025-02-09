@@ -1,0 +1,26 @@
+name: Super Linter
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+jobs:
+  lint:
+    name: Lint Code Base
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Run Super Linter
+        uses: github/super-linter@v4
+        env:
+          # Set to 'true' if you want to validate the entire codebase.
+          # Otherwise, it will only validate the files changed in the commit/PR.
+          VALIDATE_ALL_CODEBASE: true
+          # The GitHub token is required for the linter to run properly.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
