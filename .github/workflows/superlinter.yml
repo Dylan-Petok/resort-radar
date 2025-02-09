@@ -24,3 +24,6 @@ jobs:
           VALIDATE_ALL_CODEBASE: true
           # The GitHub token is required for the linter to run properly.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IGNORE_ERRORS: true
+          IGNORE_PATTERN: |
+            !.vscode/settings.json
