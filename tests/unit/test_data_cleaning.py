@@ -1,6 +1,6 @@
 # tests/unit/test_data_cleaning.py
-import sys
 import os
+import sys
 from utils.data_cleaning import clean_data, clean_text
 
 # Add the project root to sys.path
