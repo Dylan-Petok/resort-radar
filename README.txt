@@ -12,10 +12,14 @@ Store cleaned data as structured data in Snowflake
 Load cleaned data back in here, and then use a Hugging Face model to analyze sentiment for cleaned data
 Store data back in snowflake
 
-Load in tableau now? Next step is here
 
 Potential Issues/ Things need to do:
-Filter posts by TOP and THIS YEAR to get solid, relevant posts
-Mutliple Resorts in a post
-Unrelated topics in post skewing sentiment for Resort mentioned in post -> might want to analyze which parts of a post refer to the resort or which parts are irrelveant in the post
-Deal with wrong dates in loaded data
+Make sure content being analyzed is accurate:
+    -Mutliple Resorts in a post
+    -Unrelated topics in post skewing sentiment for Resort mentioned in post -> might want to analyze which parts of a post refer to the resort or which parts are irrelveant in the post
+
+Make website to put tableau worksheets in 
+
+Make CI/CD workflow
+
+Make docker container
