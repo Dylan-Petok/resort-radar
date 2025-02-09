@@ -1,14 +1,11 @@
 # tests/unit/test_data_extraction.py
-import sys
 import os
-
+import sys
 # Add the project root to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
-import pytest
 from unittest import mock
-import praw
-
 from utils.data_extraction import extract_data, top_ten
+
 
 
 # We'll reuse this helper function to build mock posts easily.

@@ -1,11 +1,10 @@
 # tests/unit/test_data_cleaning.py
 import sys
 import os
+from utils.data_cleaning import clean_data, clean_text
 
 # Add the project root to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
-import pytest
-from utils.data_cleaning import clean_data, clean_text
 
 
 def test_clean_text_handles_empty_and_none():

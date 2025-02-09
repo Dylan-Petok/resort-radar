@@ -1,8 +1,6 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
 import pandas as pd
-import numpy as np
-from utils import data_storage
-from sqlalchemy import create_engine
+
 
 # Define label mappings
 label_mapping = {"LABEL_0": "Negative", "LABEL_1": "Neutral", "LABEL_2": "Positive"}

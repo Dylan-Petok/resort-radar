@@ -1,7 +1,5 @@
 import re
-import nltk
 from nltk.corpus import stopwords
-from langdetect import detect
 from datetime import datetime
 
 
