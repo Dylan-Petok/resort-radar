@@ -10,7 +10,6 @@ import urllib.parse
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 
-
 @mock.patch("utils.data_storage.connect_snowflake")
 def test_store_data(mock_connect_snowflake):
     mock_conn = mock.Mock()

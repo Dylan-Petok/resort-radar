@@ -1,12 +1,5 @@
 import sys
 import os
-
-# Add the project root to sys.path
-sys.path.append(
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
-)  # this code is added so the interpreter can find the utils folder
-import pytest
-import praw
 from unittest.mock import patch
 from unittest import mock
 from utils.data_storage import (
@@ -15,6 +8,11 @@ from utils.data_storage import (
     load_cleaned_data,
     store_sentiment_data,
 )
+
+# Add the project root to sys.path
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+)  # this code is added so the interpreter can find the utils folder
 
 
 @patch("praw.Reddit")
