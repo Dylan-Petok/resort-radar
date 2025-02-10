@@ -1,3 +1,4 @@
 [flake8]
 per-file-ignores =
     tests/*: E402
+    utils/sentiment_analysis.py: E1137
