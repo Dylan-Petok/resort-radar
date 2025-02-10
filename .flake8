@@ -1,4 +1,5 @@
 [flake8]
+exclude = myenv, .git, __pycache__
 per-file-ignores =
     tests/*: E402
     utils/sentiment_analysis.py: E1137
