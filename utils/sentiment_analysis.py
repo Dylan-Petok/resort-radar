@@ -1,3 +1,4 @@
+# pylint: disable=E1137
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
 import pandas as pd
 
