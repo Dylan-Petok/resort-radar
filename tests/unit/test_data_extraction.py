@@ -1,9 +1,11 @@
+# flake8: noqa: E402
 # tests/unit/test_data_extraction.py
 import os
 import sys
 
 # Add the project root to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+
 from unittest import mock
 from utils.data_extraction import extract_data, top_ten
 

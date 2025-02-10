@@ -1,5 +1,7 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
 import pandas as pd
+from collections import defaultdict
+
 
 
 # Define label mappings
@@ -73,10 +75,9 @@ def analyze_sentiment(data: pd.DataFrame) -> pd.DataFrame:
                 total_tokens += chunk_length
 
                 if aggregated_probs is None:
-                    aggregated_probs = {
-                        label: prob * chunk_length
-                        for label, prob in chunk_probs.items()
-                    }
+                    aggregated_probs = defaultdict(float)
+                    for label, prob in chunk_probs.items():
+                        aggregated_probs[label] = prob * chunk_length
                 else:
                     for label, prob in chunk_probs.items():
                         aggregated_probs[label] += prob * chunk_length

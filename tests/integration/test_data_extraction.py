@@ -1,13 +1,14 @@
 import os
 import sys
-from unittest.mock import patch
-from unittest import mock
-from utils.data_extraction import extract_data
 
 # Add the project root to sys.path
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
 )  # this code is added so the interpreter can find the utils folder
+
+from unittest.mock import patch
+from unittest import mock
+from utils.data_extraction import extract_data
 
 
 @patch("praw.Reddit")
