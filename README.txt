@@ -23,3 +23,6 @@ Make website to put tableau worksheets in
 Make CI/CD workflow
 
 Make docker container
+
+LEFT OFF:
+Flake8 file is not registering? Its not working... why??
