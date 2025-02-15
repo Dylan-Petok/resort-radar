@@ -1,6 +1,5 @@
 # pylint: disable=E1137
 import pandas as pd
-
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
 
 # Define label mappings

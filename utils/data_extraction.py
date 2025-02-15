@@ -23,8 +23,8 @@ def extract_data(reddit):
     fetch_limit_multiplier = 3
     fetch_limit = (
         target_limit * fetch_limit_multiplier
-    )  # Calculate number of posts to fetch.. example: we want a limit of 5 posts but we fetch 15 to account for those posts
-       # that MAY be just image posts, as we want text based posts
+    )  # Calculate number of posts to fetch.. example: we want a limit of 5 posts but we fetch 15 to account for posts
+    # that MAY be just image posts, as we want text based posts
 
     for resort, nicknames in top_ten.items():
         query = " OR ".join(nicknames)  # make query for search

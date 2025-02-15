@@ -10,7 +10,6 @@ import urllib.parse
 from unittest import mock
 
 import pandas as pd
-
 from utils.data_storage import load_cleaned_data, store_data, store_sentiment_data
 
 
