@@ -1,3 +1,4 @@
+# flake8: noqa: E402
 # tests/unit/test_data_storage.py
 import os
 import sys
