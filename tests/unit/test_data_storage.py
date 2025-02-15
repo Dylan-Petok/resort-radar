@@ -6,10 +6,12 @@ import sys
 # Add the project root to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-from unittest import mock
-import pandas as pd
-from utils.data_storage import store_data, load_cleaned_data, store_sentiment_data
 import urllib.parse
+from unittest import mock
+
+import pandas as pd
+
+from utils.data_storage import load_cleaned_data, store_data, store_sentiment_data
 
 
 @mock.patch("utils.data_storage.connect_snowflake")

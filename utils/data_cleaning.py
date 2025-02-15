@@ -1,7 +1,7 @@
 import re
-from nltk.corpus import stopwords
 from datetime import datetime
 
+from nltk.corpus import stopwords
 
 # Load stopwords
 stop_words = set(stopwords.words("english"))
@@ -47,7 +47,8 @@ def clean_data(results):
                 continue
 
             # Optional: Check for language (skip non-English)
-            # **FOR NOW COMMENTING OUT, WILL NOT LET TESTS PASS, TEST HAS FEW WORDS, WHICH LANGUAGE DETECTOR CAN NOT PICK UP
+            # **FOR NOW COMMENTING OUT, WILL NOT LET TESTS PASS,
+            # TEST HAS FEW WORDS, WHICH LANGUAGE DETECTOR CAN NOT PICK UP
             # try:
             #     if detect(cleaned_text) != "en":
             #         continue

@@ -7,14 +7,8 @@ sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
 )  # this code is added so the interpreter can find the utils folder
 
-from unittest.mock import patch
 from unittest import mock
-from utils.data_storage import (
-    connect_snowflake,
-    store_data,
-    load_cleaned_data,
-    store_sentiment_data,
-)
+from unittest.mock import patch
 
 
 @patch("praw.Reddit")

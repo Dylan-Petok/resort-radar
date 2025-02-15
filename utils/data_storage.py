@@ -1,15 +1,16 @@
-import snowflake.connector
-import pandas as pd
-from sqlalchemy import create_engine
-import urllib.parse
 import os
+import urllib.parse
+
+import pandas as pd
+import snowflake.connector
+from sqlalchemy import create_engine
 
 sf_user = user = os.getenv("SNOWFLAKE_USER")
 sf_pass = password = os.getenv("SNOWFLAKE_PASS")
 sf_acc = account = os.getenv("SNOWFLAKE_ACCOUNT")
 
 # encoded password for url
-sf_pass_e = urllib.parse.quote(os.getenv("SNOWFLAKE_PASS"))
+sf_pass_e = urllib.parse.quote(sf_pass)
 
 
 def connect_snowflake():
