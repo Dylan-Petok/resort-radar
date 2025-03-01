@@ -11,8 +11,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Read environment variables
-PROJECT_ID = os.getenv("GCP_PROJECT_ID", "my-gcp-project")
-DATASET = os.getenv("BIGQUERY_DATASET", "my_dataset")
+PROJECT_ID = os.getenv("PROJECT_ID", "my-gcp-project")
+DATASET = os.getenv("DATASET", "my_dataset")
 CLEANED_TABLE = os.getenv("CLEANED_TABLE", "cleaned_posts")
 SENTIMENT_TABLE = os.getenv("SENTIMENT_TABLE", "sentiment_data")
 

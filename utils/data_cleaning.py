@@ -1,12 +1,6 @@
 import re
 from datetime import datetime
 
-from nltk.corpus import stopwords
-
-# Load stopwords
-stop_words = set(stopwords.words("english"))
-
-
 def clean_text(text):
     """
     Clean and normalize a text string.
