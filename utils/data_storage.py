@@ -1,108 +1,100 @@
+
 import os
-import urllib.parse
-
+import sys
 import pandas as pd
-import snowflake.connector
-from sqlalchemy import create_engine
+# import urllib.parse
+print("Interpreter:", sys.executable)
+print("sys.path:", sys.path)
+from google.cloud import bigquery
+from dotenv import load_dotenv
+# Load environment variables from .env file
+load_dotenv()
 
-sf_user = user = os.getenv("SNOWFLAKE_USER")
-sf_pass = password = os.getenv("SNOWFLAKE_PASS", "")
-sf_acc = account = os.getenv("SNOWFLAKE_ACCOUNT")
+# Read environment variables
+PROJECT_ID = os.getenv("GCP_PROJECT_ID", "my-gcp-project")
+DATASET = os.getenv("BIGQUERY_DATASET", "my_dataset")
+CLEANED_TABLE = os.getenv("CLEANED_TABLE", "cleaned_posts")
+SENTIMENT_TABLE = os.getenv("SENTIMENT_TABLE", "sentiment_data")
 
 # encoded password for url
-sf_pass_e = urllib.parse.quote(sf_pass)
+# sf_pass_e = urllib.parse.quote(sf_pass)
 
 
-def connect_snowflake():
-    try:
-        # connect to snowflake
-        conn = snowflake.connector.connect(
-            user=sf_user,
-            password=sf_pass,
-            account=sf_acc,
-            warehouse="COMPUTE_WH",
-            database="RESORTRADAR",
-            schema="PUBLIC",
-            role="ACCOUNTADMIN",
-        )
-        return conn
-    except Exception as e:
-        print("Error connecting to Snowflake:", e)
-        raise  # This will stop execution and give you a full traceback
-
+def get_bq_client():
+    """
+    Creates and returns a BigQuery client using the default credentials
+    (which must be set via GOOGLE_APPLICATION_CREDENTIALS).
+    """
+    return bigquery.Client(project=PROJECT_ID)
 
 def store_data(cleaned_results):
-    conn = connect_snowflake()
-    cursor = conn.cursor()
-    try:
-        # Clear out the table before inserting new data.
-        # TRUNCATE TABLE is generally faster than DELETE * from cleaned_posts and resets the table.
-        cursor.execute("TRUNCATE TABLE cleaned_posts")
-        conn.commit()
-        # Iterate over cleaned data and insert into Snowflake
-        for resort, posts in cleaned_results.items():
-            for post in posts:
-                insert_query = """
-                        INSERT INTO cleaned_posts (RESORT, TITLE, P_TEXT, SCORE, CREATED)
-                        VALUES (%s, %s, %s, %s, %s)
-                    """
-                cursor.execute(
-                    insert_query,
-                    (
-                        post["resort"],
-                        post["title"],
-                        post["text"],
-                        post["score"],
-                        post["created_utc"],
-                    ),
-                )
+    """
+    Replaces the 'store_data' function for Snowflake.
+    - Builds a DataFrame from the cleaned_results dictionary.
+    - Loads it into BigQuery (truncates the table each time to mimic 'TRUNCATE TABLE').
+    """
+    client = get_bq_client()
 
-        conn.commit()
-        cursor.close()
-        conn.close()
-        print("Cleaned data loaded into Snowflake successfully.")
-        return True
-    except Exception as e:
-        print(f"[ISSUE]: Data Storage Query! : {e}")
-        return False
+    # Convert your cleaned_results (dict of lists) into a DataFrame
+    rows = []
+    for resort, posts in cleaned_results.items():
+        for post in posts:
+            rows.append({
+                "resort": post["resort"],
+                "title": post["title"],
+                "text": post["text"],
+                "score": post["score"],
+                "created_utc": post["created_utc"],
+            })
 
+    df = pd.DataFrame(rows)
+
+    # Define the fully-qualified table ID: project.dataset.table
+    table_id = f"{PROJECT_ID}.{DATASET}.{CLEANED_TABLE}"
+
+    # Configure the load job to overwrite (truncate) the existing table
+    job_config = bigquery.LoadJobConfig(
+        write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE
+    )
+
+    # Load DataFrame into BigQuery
+    load_job = client.load_table_from_dataframe(df, table_id, job_config=job_config)
+    load_job.result()  # Wait for the job to complete
+
+    print("Cleaned data loaded into BigQuery successfully.")
+    return True
 
 def load_cleaned_data():
-    conn = connect_snowflake()
-    cursor = conn.cursor()
-    try:
-        query = "SELECT * from cleaned_posts"
-        cursor.execute(query)
-        columns = [desc[0] for desc in cursor.description]
-        data = pd.DataFrame(cursor.fetchall(), columns=columns)
+    """
+    Replaces 'load_cleaned_data' for Snowflake.
+    - Queries the cleaned_posts table in BigQuery and returns a DataFrame.
+    """
+    client = get_bq_client()
 
-        print("Cleaned data loaded into Snowflake successfully.")
-        return data
+    table_id = f"{PROJECT_ID}.{DATASET}.{CLEANED_TABLE}"
+    query = f"SELECT * FROM `{table_id}`"
 
-    except Exception as e:
-        print(f"[ISSUE]: Clean Data Load Query : {e}")
-        return False
+    query_job = client.query(query)
+    df = query_job.result().to_dataframe()
 
-    finally:
-        conn.close()
-        cursor.close()
-
+    print("Cleaned data loaded from BigQuery successfully.")
+    return df
 
 def store_sentiment_data(dataframe):
-    try:
-        # Create a connection engine
-        engine = create_engine(
-            f"snowflake://{sf_user}:{sf_pass_e}@{sf_acc}/RESORTRADAR/PUBLIC"
-        )
-        print(engine)
-        dataframe.to_sql(
-            name="sentiment_data",  # snowflake table name
-            con=engine,
-            if_exists="replace",  # 'replace' to overwrite, 'append' to add rows
-            index=False,
-        )
-        print("Sentiment analysis data loaded into Snowflake successfully.")
-        return True
-    except Exception as e:
-        print(e)
-        return False
+    """
+    Replaces 'store_sentiment_data' for Snowflake.
+    - Loads a pandas DataFrame into a separate table for sentiment results.
+    - Overwrites (replace) the table by default. You can change to WRITE_APPEND if needed.
+    """
+    client = get_bq_client()
+    table_id = f"{PROJECT_ID}.{DATASET}.{SENTIMENT_TABLE}"
+
+    job_config = bigquery.LoadJobConfig(
+        write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE
+    )
+
+    load_job = client.load_table_from_dataframe(dataframe, table_id, job_config=job_config)
+    load_job.result()
+
+    print("Sentiment analysis data loaded into BigQuery successfully.")
+    return True
