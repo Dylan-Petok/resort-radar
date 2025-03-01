@@ -7,6 +7,8 @@ print("Interpreter:", sys.executable)
 print("sys.path:", sys.path)
 from google.cloud import bigquery
 from dotenv import load_dotenv
+import gspread
+from gspread_dataframe import set_with_dataframe
 # Load environment variables from .env file
 load_dotenv()
 
@@ -97,4 +99,34 @@ def store_sentiment_data(dataframe):
     load_job.result()
 
     print("Sentiment analysis data loaded into BigQuery successfully.")
+    return True
+
+def sentiment_data_to_sheets(dataframe):
+    """
+    Exports the sentiment analysis data to a Google Sheet.
+    
+    Environment Variables Needed:
+      - SHEET_ID: The ID of the target Google Sheet.
+      - SHEET_NAME (optional): The name of the worksheet (default is "Sheet1").
+    
+    The function will clear the target worksheet and overwrite it with the new data.
+    Ensure that the GOOGLE_APPLICATION_CREDENTIALS environment variable is set to your service account JSON file.
+    """
+    service_account_file = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+
+    sheet_id = os.getenv("SHEET_ID")
+    if not sheet_id:
+        raise ValueError("SHEET_ID environment variable is not set")
+    sheet_name = os.getenv("SHEET_NAME", "Sheet1")
+
+    gc = gspread.service_account(filename=service_account_file)
+
+    sh = gc.open_by_key(sheet_id)
+
+    worksheet = sh.worksheet(sheet_name)
+
+    #clear the document and write the new dataframe
+    worksheet.clear()
+    set_with_dataframe(worksheet, dataframe)
+
     return True

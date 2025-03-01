@@ -103,7 +103,7 @@ def analyze_sentiment(data: pd.DataFrame) -> pd.DataFrame:
         return overall_label, overall_score
 
     # Apply the process_post function to each text in the DataFrame
-    results = data["P_TEXT"].apply(process_post)
+    results = data["text"].apply(process_post)
     data["sentiment_label"] = results.apply(lambda x: x[0])
     data["sentiment_score"] = results.apply(lambda x: x[1])
 

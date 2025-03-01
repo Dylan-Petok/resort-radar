@@ -43,5 +43,10 @@ print("Storing sentiment analysis data... \n")
 data_storage.store_sentiment_data(sentiment_analysis_data)
 print("Done storing sentiment analysis data!")
 
+#send the sentiment data to google sheets, so it can be consumed by tableau for viz
+print('Sending sentiment data to google sheets')
+data_storage.sentiment_data_to_sheets(sentiment_analysis_data)
+print('Done sending sentiment data to google sheets')
+
 # # visualize results
 
